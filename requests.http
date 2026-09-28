@@ -1,0 +1,162 @@
+### Variáveis do Ambiente
+@baseUrl = http://localhost:8080
+
+###############################################################################
+### 1. MÉDICOS
+###############################################################################
+
+### Cadastrar Médico
+POST {{baseUrl}}/medicos
+Content-Type: application/json
+
+{
+  "nome": "Dr. Rodrigo Ferreira",
+  "email": "rodrigo.ferreira@medfema.com.br",
+  "telefone": "18999998888",
+  "crm": "123456",
+  "especialidade": "CARDIOLOGIA",
+  "endereco": {
+    "logradouro": "Rua das Flores",
+    "bairro": "Centro",
+    "cep": "19800000",
+    "cidade": "Assis",
+    "uf": "SP",
+    "numero": "100",
+    "complemento": "Sala 10"
+  }
+}
+
+### Listar Médicos Ativos (Paginado)
+GET {{baseUrl}}/medicos?size=10&page=0&sort=nome,asc
+
+### Atualizar Informações do Médico
+PUT {{baseUrl}}/medicos
+Content-Type: application/json
+
+{
+  "id": 1,
+  "nome": "Dr. Rodrigo Ferreira Santos",
+  "telefone": "18991112233",
+  "endereco": {
+    "logradouro": "Av. Rui Barbosa",
+    "bairro": "Centro",
+    "cep": "19800000",
+    "cidade": "Assis",
+    "uf": "SP",
+    "numero": "250",
+    "complemento": "Apto 101"
+  }
+}
+
+### Excluir Médico (Inativação Lógica)
+DELETE {{baseUrl}}/medicos/1
+
+
+###############################################################################
+### 2. PACIENTES
+###############################################################################
+
+### Cadastrar Paciente
+POST {{baseUrl}}/pacientes
+Content-Type: application/json
+
+{
+  "nome": "Mariana Souza Silva",
+  "email": "mariana.souza@email.com",
+  "telefone": "18988887777",
+  "cpf": "123.456.789-00",
+  "endereco": {
+    "logradouro": "Rua Nove de Julho",
+    "bairro": "Vila Operária",
+    "cep": "19806000",
+    "cidade": "Assis",
+    "uf": "SP",
+    "numero": "50",
+    "complemento": null
+  }
+}
+
+### Listar Pacientes Ativos (Paginado)
+GET {{baseUrl}}/pacientes?size=10&page=0&sort=nome,asc
+
+### Atualizar Informações do Paciente
+PUT {{baseUrl}}/pacientes
+Content-Type: application/json
+
+{
+  "id": 1,
+  "nome": "Mariana Souza Silva Pereira",
+  "telefone": "18981234567",
+  "endereco": {
+    "logradouro": "Rua Nove de Julho",
+    "bairro": "Vila Operária",
+    "cep": "19806000",
+    "cidade": "Assis",
+    "uf": "SP",
+    "numero": "55",
+    "complemento": "Casa A"
+  }
+}
+
+### Excluir Paciente (Inativação Lógica)
+DELETE {{baseUrl}}/pacientes/1
+
+
+###############################################################################
+### 3. CONSULTAS
+###############################################################################
+
+### Agendar Consulta - Com Médico Específico
+POST {{baseUrl}}/consultas
+Content-Type: application/json
+
+{
+  "idMedico": 1,
+  "idPaciente": 1,
+  "data": "2026-10-15T14:00:00"
+}
+
+### Agendar Consulta - Médico Aleatório por Especialidade
+POST {{baseUrl}}/consultas
+Content-Type: application/json
+
+{
+  "idPaciente": 1,
+  "data": "2026-10-16T10:00:00",
+  "especialidade": "CARDIOLOGIA"
+}
+
+### Cancelar Consulta - Motivo: PACIENTE_DESISTIU
+DELETE {{baseUrl}}/consultas
+Content-Type: application/json
+
+{
+  "idConsulta": 1,
+  "motivo": "PACIENTE_DESISTIU"
+}
+
+### Cancelar Consulta - Motivo: MEDICO_CANCELOU
+DELETE {{baseUrl}}/consultas
+Content-Type: application/json
+
+{
+  "idConsulta": 2,
+  "motivo": "MEDICO_CANCELOU"
+}
+
+### Cancelar Consulta - Motivo: OUTROS
+DELETE {{baseUrl}}/consultas
+Content-Type: application/json
+
+{
+  "idConsulta": 3,
+  "motivo": "OUTROS"
+}
+
+
+###############################################################################
+### 4. UTILITÁRIOS
+###############################################################################
+
+### Hello World
+GET {{baseUrl}}/hello

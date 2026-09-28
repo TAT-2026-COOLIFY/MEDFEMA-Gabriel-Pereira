@@ -1,0 +1,650 @@
+{
+	"info": {
+		"_postman_id": "b1a2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+		"name": "MedFema API",
+		"description": "Collection completa com todas as requisições, endpoints e testes automatizados da API MedFema (Médicos, Pacientes e Consultas).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Médicos",
+			"item": [
+				{
+					"name": "Cadastrar Médico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Dr. Rodrigo Ferreira\",\n  \"email\": \"rodrigo.ferreira@medfema.com.br\",\n  \"telefone\": \"18999998888\",\n  \"crm\": \"123456\",\n  \"especialidade\": \"CARDIOLOGIA\",\n  \"endereco\": {\n    \"logradouro\": \"Rua das Flores\",\n    \"bairro\": \"Centro\",\n    \"cep\": \"19800000\",\n    \"cidade\": \"Assis\",\n    \"uf\": \"SP\",\n    \"numero\": \"100\",\n    \"complemento\": \"Sala 10\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/medicos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicos"
+							]
+						},
+						"description": "Cadastra um novo médico no sistema com especialidade e endereço."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Médicos Ativos (Paginado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Retorno deve ser uma página de médicos\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('content');",
+									"    pm.expect(jsonData.content).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/medicos?size=10&page=0&sort=nome,asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicos"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Quantidade de registros por página"
+								},
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Número da página (0-indexed)"
+								},
+								{
+									"key": "sort",
+									"value": "nome,asc",
+									"description": "Ordenação por campo e direção"
+								}
+							]
+						},
+						"description": "Retorna a listagem paginada de médicos ativos ordenados por nome."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Médico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"nome\": \"Dr. Rodrigo Ferreira Santos\",\n  \"telefone\": \"18991112233\",\n  \"endereco\": {\n    \"logradouro\": \"Av. Rui Barbosa\",\n    \"bairro\": \"Centro\",\n    \"cep\": \"19800000\",\n    \"cidade\": \"Assis\",\n    \"uf\": \"SP\",\n    \"numero\": \"250\",\n    \"complemento\": \"Apto 101\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/medicos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicos"
+							]
+						},
+						"description": "Atualiza dados cadastrais de um médico existente (nome, telefone, endereço)."
+					},
+					"response": []
+				},
+				{
+					"name": "Excluir Médico (Inativação Lógica)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/medicos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicos",
+								"1"
+							]
+						},
+						"description": "Realiza a exclusão lógica do médico alterando o campo ativo para false."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Pacientes",
+			"item": [
+				{
+					"name": "Cadastrar Paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Mariana Souza Silva\",\n  \"email\": \"mariana.souza@email.com\",\n  \"telefone\": \"18988887777\",\n  \"cpf\": \"123.456.789-00\",\n  \"endereco\": {\n    \"logradouro\": \"Rua Nove de Julho\",\n    \"bairro\": \"Vila Operária\",\n    \"cep\": \"19806000\",\n    \"cidade\": \"Assis\",\n    \"uf\": \"SP\",\n    \"numero\": \"50\",\n    \"complemento\": null\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pacientes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pacientes"
+							]
+						},
+						"description": "Cadastra um novo paciente no sistema."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Pacientes Ativos (Paginado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Retorno deve ser uma página de pacientes\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('content');",
+									"    pm.expect(jsonData.content).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pacientes?size=10&page=0&sort=nome,asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pacientes"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "nome,asc"
+								}
+							]
+						},
+						"description": "Lista pacientes ativos paginados e ordenados."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"nome\": \"Mariana Souza Silva Pereira\",\n  \"telefone\": \"18981234567\",\n  \"endereco\": {\n    \"logradouro\": \"Rua Nove de Julho\",\n    \"bairro\": \"Vila Operária\",\n    \"cep\": \"19806000\",\n    \"cidade\": \"Assis\",\n    \"uf\": \"SP\",\n    \"numero\": \"55\",\n    \"complemento\": \"Casa A\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pacientes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pacientes"
+							]
+						},
+						"description": "Atualiza dados cadastrais de um paciente existente."
+					},
+					"response": []
+				},
+				{
+					"name": "Excluir Paciente (Inativação Lógica)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pacientes/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pacientes",
+								"1"
+							]
+						},
+						"description": "Realiza a exclusão lógica do paciente alterando o campo ativo para false."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Consultas",
+			"item": [
+				{
+					"name": "Agendar Consulta - Com Médico Específico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Deve retornar dados detalhados da consulta\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('idMedico');",
+									"    pm.expect(jsonData).to.have.property('idPaciente');",
+									"    pm.expect(jsonData).to.have.property('data');",
+									"    pm.environment.set(\"idConsultaCriada\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idMedico\": 1,\n  \"idPaciente\": 1,\n  \"data\": \"2026-10-15T14:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consultas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							]
+						},
+						"description": "Agenda uma consulta especificando o médico desejado."
+					},
+					"response": []
+				},
+				{
+					"name": "Agendar Consulta - Médico Aleatório por Especialidade",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Deve conter ID do médico escolhido automaticamente\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.idMedico).to.not.be.null;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idPaciente\": 1,\n  \"data\": \"2026-10-16T10:00:00\",\n  \"especialidade\": \"CARDIOLOGIA\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consultas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							]
+						},
+						"description": "Agenda uma consulta com médico aleatório disponível da especialidade informada."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta - Motivo: PACIENTE_DESISTIU",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idConsulta\": 1,\n  \"motivo\": \"PACIENTE_DESISTIU\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consultas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							]
+						},
+						"description": "Cancela uma consulta agendada com antecedência mínima de 24 horas por motivo de desistência do paciente."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta - Motivo: MEDICO_CANCELOU",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idConsulta\": 2,\n  \"motivo\": \"MEDICO_CANCELOU\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consultas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							]
+						},
+						"description": "Cancela uma consulta agendada pelo médico."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta - Motivo: OUTROS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idConsulta\": 3,\n  \"motivo\": \"OUTROS\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consultas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							]
+						},
+						"description": "Cancela uma consulta por outros motivos."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta - Inválido (Sem Motivo - Espera 400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 400 Bad Request por validação\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idConsulta\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/consultas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							]
+						},
+						"description": "Testa a validação @NotNull no campo motivo (espera HTTP 400)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Utilitários",
+			"item": [
+				{
+					"name": "Hello World",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Mensagem retornada deve ser Hello World Spring!\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Hello World Spring!\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/hello",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hello"
+							]
+						},
+						"description": "Endpoint de teste de conectividade com a API."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
