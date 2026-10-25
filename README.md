@@ -37,6 +37,7 @@ A exclusão de médicos e pacientes é lógica: o registro não é apagado do ba
 
 - Regra de negócio violada: `400 Bad Request` com a mensagem do erro;
 - Campos inválidos no corpo da requisição: `400 Bad Request` com a lista de erros por campo, no formato `[{ "campo": "crm", "mensagem": "..." }]`;
+- E-mail, CRM ou CPF já cadastrado: `400 Bad Request` no mesmo formato, indicando o campo repetido (ex.: `[{ "campo": "crm", "mensagem": "já está cadastrado" }]`);
 - Registro não encontrado (id inexistente): `404 Not Found`.
 
 ---

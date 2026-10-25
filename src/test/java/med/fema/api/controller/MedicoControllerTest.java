@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -80,6 +83,28 @@ class MedicoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dadosCadastro)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deveria devolver codigo HTTP 400 indicando o campo quando o CRM ja estiver cadastrado")
+    void cadastrar_cenarioCrmDuplicado() throws Exception {
+        var dadosCadastro = new DadosCadastroMedico(
+                "Dr. Rodrigo Ferreira",
+                "rodrigo@medfema.com",
+                "18999998888",
+                "123456",
+                Especialidade.CARDIOLOGIA,
+                dadosEndereco()
+        );
+
+        var causa = new SQLIntegrityConstraintViolationException("Duplicate entry '123456' for key 'medicos.crm'");
+        when(repository.save(any())).thenThrow(new DataIntegrityViolationException("could not execute statement", causa));
+
+        mvc.perform(post("/medicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCadastro)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].campo").value("crm"));
     }
 
     @Test

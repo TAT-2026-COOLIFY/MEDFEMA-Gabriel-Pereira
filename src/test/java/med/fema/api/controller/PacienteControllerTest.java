@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -78,6 +81,27 @@ class PacienteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dadosCadastro)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Deveria devolver codigo HTTP 400 indicando o campo quando o CPF ja estiver cadastrado")
+    void cadastrar_cenarioCpfDuplicado() throws Exception {
+        var dadosCadastro = new DadosCadastroPaciente(
+                "Mariana Souza",
+                "mariana@email.com",
+                "18988887777",
+                "123.456.789-00",
+                dadosEndereco()
+        );
+
+        var causa = new SQLIntegrityConstraintViolationException("Duplicate entry '123.456.789-00' for key 'pacientes.cpf'");
+        when(repository.save(any())).thenThrow(new DataIntegrityViolationException("could not execute statement", causa));
+
+        mvc.perform(post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCadastro)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].campo").value("cpf"));
     }
 
     @Test
