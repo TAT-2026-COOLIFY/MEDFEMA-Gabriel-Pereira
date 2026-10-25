@@ -1,0 +1,68 @@
+<section class="cabecalho-pagina">
+  <h1>Médicos</h1>
+  <a routerLink="/medicos/novo" class="botao botao-primario">Novo médico</a>
+</section>
+
+@if (mensagemErro(); as mensagem) {
+  <p class="alerta alerta-erro">{{ mensagem }}</p>
+}
+
+@if (pagina(); as resultado) {
+  @if (resultado.empty) {
+    <p class="vazio">Nenhum médico ativo cadastrado.</p>
+  } @else {
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>CRM</th>
+            <th>Especialidade</th>
+            <th class="acoes">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (medico of resultado.content; track medico.id) {
+            <tr>
+              <td>{{ medico.nome }}</td>
+              <td>{{ medico.email }}</td>
+              <td>{{ medico.crm }}</td>
+              <td>{{ nomesEspecialidades[medico.especialidade] }}</td>
+              <td class="acoes">
+                <div class="botoes-linha">
+                  <a [routerLink]="['/medicos', medico.id, 'editar']" class="botao">Editar</a>
+                  <button type="button" class="botao botao-perigo" (click)="excluir(medico)">
+                    Inativar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="paginacao" aria-label="Paginação">
+      <button
+        type="button"
+        class="botao"
+        [disabled]="resultado.first || carregando()"
+        (click)="carregar(resultado.number - 1)"
+      >
+        Anterior
+      </button>
+      <span>Página {{ resultado.number + 1 }} de {{ resultado.totalPages }}</span>
+      <button
+        type="button"
+        class="botao"
+        [disabled]="resultado.last || carregando()"
+        (click)="carregar(resultado.number + 1)"
+      >
+        Próxima
+      </button>
+    </nav>
+  }
+} @else if (carregando()) {
+  <p>Carregando...</p>
+}

@@ -1,1 +1,238 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --cor-primaria: #0f766e;
+  --cor-primaria-escura: #115e59;
+  --cor-perigo: #b91c1c;
+  --cor-texto: #1f2937;
+  --cor-texto-suave: #6b7280;
+  --cor-borda: #d1d5db;
+  --cor-fundo: #f3f4f6;
+  --cor-superficie: #ffffff;
+  --raio: 6px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+  line-height: 1.5;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+main.container {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+.cabecalho-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Botões */
+
+.botao {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao:hover:not(:disabled) {
+  background: var(--cor-fundo);
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botao-primario {
+  border-color: var(--cor-primaria);
+  background: var(--cor-primaria);
+  color: #fff;
+}
+
+.botao-primario:hover:not(:disabled) {
+  background: var(--cor-primaria-escura);
+}
+
+.botao-perigo {
+  border-color: var(--cor-perigo);
+  color: var(--cor-perigo);
+}
+
+/* Mensagens */
+
+.alerta {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: var(--raio);
+}
+
+.alerta-erro {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: var(--cor-perigo);
+}
+
+.vazio {
+  padding: 32px;
+  border: 1px dashed var(--cor-borda);
+  border-radius: var(--raio);
+  text-align: center;
+  color: var(--cor-texto-suave);
+}
+
+/* Tabela */
+
+.tabela-rolagem {
+  overflow-x: auto;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th,
+.tabela td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cor-borda);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tabela th {
+  background: var(--cor-fundo);
+  font-size: 0.85rem;
+  color: var(--cor-texto-suave);
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela .acoes {
+  text-align: right;
+}
+
+.botoes-linha {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.paginacao {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* Formulário */
+
+.formulario fieldset {
+  margin: 0 0 20px;
+  padding: 16px 20px 20px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+
+.formulario legend {
+  padding: 0 6px;
+  font-weight: 600;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.campo label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.campo input,
+.campo select {
+  padding: 8px 10px;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  font: inherit;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: 2px solid var(--cor-primaria);
+  outline-offset: -1px;
+}
+
+.campo input:disabled,
+.campo select:disabled {
+  background: var(--cor-fundo);
+  color: var(--cor-texto-suave);
+}
+
+.campo .ng-invalid.ng-touched {
+  border-color: var(--cor-perigo);
+}
+
+.erro-campo {
+  color: var(--cor-perigo);
+  font-size: 0.8rem;
+}
+
+.dica {
+  color: var(--cor-texto-suave);
+  font-size: 0.8rem;
+}
+
+.acoes-formulario {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}

@@ -4,6 +4,13 @@ export const ESPECIALIDADES = ['ORTOPEDIA', 'CARDIOLOGIA', 'GINECOLOGIA', 'DERMA
 
 export type Especialidade = (typeof ESPECIALIDADES)[number];
 
+export const NOMES_ESPECIALIDADES: Record<Especialidade, string> = {
+  ORTOPEDIA: 'Ortopedia',
+  CARDIOLOGIA: 'Cardiologia',
+  GINECOLOGIA: 'Ginecologia',
+  DERMATOLOGIA: 'Dermatologia',
+};
+
 export interface DadosListagemMedico {
   id: number;
   nome: string;
