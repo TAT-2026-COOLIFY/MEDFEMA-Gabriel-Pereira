@@ -110,6 +110,44 @@
 					"response": []
 				},
 				{
+					"name": "Detalhar Médico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Retorno deve trazer os dados completos\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('telefone');",
+									"    pm.expect(jsonData).to.have.property('endereco');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/medicos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"medicos",
+								"1"
+							]
+						},
+						"description": "Retorna os dados completos de um médico, incluindo telefone e endereço."
+					},
+					"response": []
+				},
+				{
 					"name": "Atualizar Médico",
 					"event": [
 						{
@@ -277,6 +315,44 @@
 					"response": []
 				},
 				{
+					"name": "Detalhar Paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Retorno deve trazer os dados completos\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('telefone');",
+									"    pm.expect(jsonData).to.have.property('endereco');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pacientes/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pacientes",
+								"1"
+							]
+						},
+						"description": "Retorna os dados completos de um paciente, incluindo telefone e endereço."
+					},
+					"response": []
+				},
+				{
 					"name": "Atualizar Paciente",
 					"event": [
 						{
@@ -386,7 +462,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"idMedico\": 1,\n  \"idPaciente\": 1,\n  \"data\": \"2026-10-15T14:00:00\"\n}"
+							"raw": "{\n  \"idMedico\": 1,\n  \"idPaciente\": 1,\n  \"data\": \"2027-03-15T14:00:00\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/consultas",
@@ -430,7 +506,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"idPaciente\": 1,\n  \"data\": \"2026-10-16T10:00:00\",\n  \"especialidade\": \"CARDIOLOGIA\"\n}"
+							"raw": "{\n  \"idPaciente\": 1,\n  \"data\": \"2027-03-16T10:00:00\",\n  \"especialidade\": \"CARDIOLOGIA\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/consultas",
@@ -442,6 +518,59 @@
 							]
 						},
 						"description": "Agenda uma consulta com médico aleatório disponível da especialidade informada."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas Agendadas (Paginado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code deve ser 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Retorno deve ser uma página de consultas\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('content');",
+									"    pm.expect(jsonData.content).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/consultas?size=10&page=0&sort=data,asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"consultas"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Quantidade de registros por página"
+								},
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Número da página (0-indexed)"
+								},
+								{
+									"key": "sort",
+									"value": "data,asc",
+									"description": "Ordenação por campo e direção"
+								}
+							]
+						},
+						"description": "Retorna a listagem paginada das consultas não canceladas, ordenadas por data."
 					},
 					"response": []
 				},

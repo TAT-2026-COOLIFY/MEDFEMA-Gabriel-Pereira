@@ -29,6 +29,9 @@ Content-Type: application/json
 ### Listar Médicos Ativos (Paginado)
 GET {{baseUrl}}/medicos?size=10&page=0&sort=nome,asc
 
+### Detalhar Médico
+GET {{baseUrl}}/medicos/1
+
 ### Atualizar Informações do Médico
 PUT {{baseUrl}}/medicos
 Content-Type: application/json
@@ -79,6 +82,9 @@ Content-Type: application/json
 ### Listar Pacientes Ativos (Paginado)
 GET {{baseUrl}}/pacientes?size=10&page=0&sort=nome,asc
 
+### Detalhar Paciente
+GET {{baseUrl}}/pacientes/1
+
 ### Atualizar Informações do Paciente
 PUT {{baseUrl}}/pacientes
 Content-Type: application/json
@@ -113,7 +119,7 @@ Content-Type: application/json
 {
   "idMedico": 1,
   "idPaciente": 1,
-  "data": "2026-10-15T14:00:00"
+  "data": "2027-03-15T14:00:00"
 }
 
 ### Agendar Consulta - Médico Aleatório por Especialidade
@@ -122,9 +128,12 @@ Content-Type: application/json
 
 {
   "idPaciente": 1,
-  "data": "2026-10-16T10:00:00",
+  "data": "2027-03-16T10:00:00",
   "especialidade": "CARDIOLOGIA"
 }
+
+### Listar Consultas Agendadas (Paginado)
+GET {{baseUrl}}/consultas?size=10&page=0&sort=data,asc
 
 ### Cancelar Consulta - Motivo: PACIENTE_DESISTIU
 DELETE {{baseUrl}}/consultas

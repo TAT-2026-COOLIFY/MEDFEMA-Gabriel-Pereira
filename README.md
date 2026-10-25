@@ -33,7 +33,11 @@ A exclusão de médicos e pacientes é lógica: o registro não é apagado do ba
 - É obrigatório informar o motivo do cancelamento: `PACIENTE_DESISTIU`, `MEDICO_CANCELOU` ou `OUTROS`;
 - A consulta só pode ser cancelada com antecedência mínima de 24 horas.
 
-Quando uma regra é violada, a API responde com `400 Bad Request` e a mensagem do erro.
+### Respostas de erro
+
+- Regra de negócio violada: `400 Bad Request` com a mensagem do erro;
+- Campos inválidos no corpo da requisição: `400 Bad Request` com a lista de erros por campo, no formato `[{ "campo": "crm", "mensagem": "..." }]`;
+- Registro não encontrado (id inexistente): `404 Not Found`.
 
 ---
 
@@ -43,12 +47,15 @@ Quando uma regra é violada, a API responde com `400 Bad Request` e a mensagem d
 |--------|-------------------|---------------------------------------------|
 | POST   | `/medicos`        | Cadastra um médico                          |
 | GET    | `/medicos`        | Lista os médicos ativos (paginado, 10 por página, ordenado por nome) |
+| GET    | `/medicos/{id}`   | Detalha um médico, incluindo telefone e endereço |
 | PUT    | `/medicos`        | Atualiza os dados de um médico              |
 | DELETE | `/medicos/{id}`   | Inativa um médico                           |
 | POST   | `/pacientes`      | Cadastra um paciente                        |
 | GET    | `/pacientes`      | Lista os pacientes ativos (paginado, 10 por página, ordenado por nome) |
+| GET    | `/pacientes/{id}` | Detalha um paciente, incluindo telefone e endereço |
 | PUT    | `/pacientes`      | Atualiza os dados de um paciente            |
 | DELETE | `/pacientes/{id}` | Inativa um paciente                         |
+| GET    | `/consultas`      | Lista as consultas não canceladas (paginado, 10 por página, ordenado por data) |
 | POST   | `/consultas`      | Agenda uma consulta                         |
 | DELETE | `/consultas`      | Cancela uma consulta (id e motivo no corpo da requisição) |
 
