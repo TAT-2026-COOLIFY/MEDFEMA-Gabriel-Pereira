@@ -2,12 +2,18 @@ package med.fema.api.controller;
 
 import jakarta.validation.Valid;
 import med.fema.api.consulta.AgendaDeConsultas;
+import med.fema.api.consulta.ConsultaRepository;
 import med.fema.api.consulta.DadosAgendamentoConsulta;
 import med.fema.api.consulta.DadosCancelamentoConsulta;
+import med.fema.api.consulta.DadosDetalhamentoConsulta;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +25,14 @@ public class ConsultaController {
 
     @Autowired
     private AgendaDeConsultas agenda;
+
+    @Autowired
+    private ConsultaRepository consultaRepository;
+
+    @GetMapping
+    public Page<DadosDetalhamentoConsulta> listar(@PageableDefault(size = 10, sort = {"data"}) Pageable paginacao) {
+        return consultaRepository.findAllByMotivoCancelamentoIsNull(paginacao).map(DadosDetalhamentoConsulta::new);
+    }
 
     @PostMapping
     @Transactional

@@ -3,6 +3,7 @@ package med.fema.api.controller;
 import jakarta.validation.Valid;
 import med.fema.api.medico.DadosAtualizacaoMedico;
 import med.fema.api.medico.DadosCadastroMedico;
+import med.fema.api.medico.DadosDetalhamentoMedico;
 import med.fema.api.medico.DadosListagemMedico;
 import med.fema.api.medico.Medico;
 import med.fema.api.medico.MedicoRepository;
@@ -36,6 +37,12 @@ public class MedicoController {
     @GetMapping
     public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+    }
+
+    @GetMapping("/{id}")
+    public DadosDetalhamentoMedico detalhar(@PathVariable Long id) {
+        var medico = repository.getReferenceById(id);
+        return new DadosDetalhamentoMedico(medico);
     }
 
     @PutMapping
