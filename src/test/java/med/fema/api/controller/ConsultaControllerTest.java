@@ -2,26 +2,37 @@ package med.fema.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import med.fema.api.consulta.AgendaDeConsultas;
+import med.fema.api.consulta.Consulta;
+import med.fema.api.consulta.ConsultaRepository;
 import med.fema.api.consulta.DadosAgendamentoConsulta;
 import med.fema.api.consulta.DadosCancelamentoConsulta;
 import med.fema.api.consulta.DadosDetalhamentoConsulta;
 import med.fema.api.consulta.MotivoCancelamento;
+import med.fema.api.endereco.DadosEndereco;
+import med.fema.api.medico.DadosCadastroMedico;
 import med.fema.api.medico.Especialidade;
+import med.fema.api.medico.Medico;
+import med.fema.api.paciente.DadosCadastroPaciente;
+import med.fema.api.paciente.Paciente;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +49,25 @@ class ConsultaControllerTest {
 
     @MockBean
     private AgendaDeConsultas agendaDeConsultas;
+
+    @MockBean
+    private ConsultaRepository consultaRepository;
+
+    @Test
+    @DisplayName("Deveria devolver codigo HTTP 200 com os nomes do medico e do paciente ao listar consultas")
+    void listar_cenarioValido() throws Exception {
+        var endereco = new DadosEndereco("Rua das Flores", "Centro", "19800000", "Assis", "SP", null, "100");
+        var medico = new Medico(new DadosCadastroMedico("Dr. Rodrigo", "rodrigo@email.com", "18999998888", "123456", Especialidade.CARDIOLOGIA, endereco));
+        var paciente = new Paciente(new DadosCadastroPaciente("Mariana Souza", "mariana@email.com", "18988887777", "123.456.789-00", endereco));
+        var consulta = new Consulta(1L, medico, paciente, LocalDateTime.now().plusDays(3));
+        when(consultaRepository.findAllByMotivoCancelamentoIsNull(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(consulta)));
+
+        mvc.perform(get("/consultas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].nomeMedico").value("Dr. Rodrigo"))
+                .andExpect(jsonPath("$.content[0].especialidade").value("CARDIOLOGIA"))
+                .andExpect(jsonPath("$.content[0].nomePaciente").value("Mariana Souza"));
+    }
 
     @Test
     @DisplayName("Deveria devolver codigo HTTP 400 quando informacoes estao invalidas no agendamento")

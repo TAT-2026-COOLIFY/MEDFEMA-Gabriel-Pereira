@@ -5,7 +5,7 @@ import med.fema.api.consulta.AgendaDeConsultas;
 import med.fema.api.consulta.ConsultaRepository;
 import med.fema.api.consulta.DadosAgendamentoConsulta;
 import med.fema.api.consulta.DadosCancelamentoConsulta;
-import med.fema.api.consulta.DadosDetalhamentoConsulta;
+import med.fema.api.consulta.DadosListagemConsulta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +30,8 @@ public class ConsultaController {
     private ConsultaRepository consultaRepository;
 
     @GetMapping
-    public Page<DadosDetalhamentoConsulta> listar(@PageableDefault(size = 10, sort = {"data"}) Pageable paginacao) {
-        return consultaRepository.findAllByMotivoCancelamentoIsNull(paginacao).map(DadosDetalhamentoConsulta::new);
+    public Page<DadosListagemConsulta> listar(@PageableDefault(size = 10, sort = {"data"}) Pageable paginacao) {
+        return consultaRepository.findAllByMotivoCancelamentoIsNull(paginacao).map(DadosListagemConsulta::new);
     }
 
     @PostMapping

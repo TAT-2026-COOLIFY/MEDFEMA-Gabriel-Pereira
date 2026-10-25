@@ -23,5 +23,6 @@ describe('App', () => {
     expect(compiled.querySelector('.marca')?.textContent).toContain('MedFema');
     expect(compiled.querySelector('.menu')?.textContent).toContain('Médicos');
     expect(compiled.querySelector('.menu')?.textContent).toContain('Pacientes');
+    expect(compiled.querySelector('.menu')?.textContent).toContain('Consultas');
   });
 });

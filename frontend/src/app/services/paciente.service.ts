@@ -14,8 +14,8 @@ export class PacienteService {
   private readonly http = inject(HttpClient);
   private readonly url = '/api/pacientes';
 
-  listar(pagina = 0): Observable<Page<DadosListagemPaciente>> {
-    const params = new HttpParams().set('page', pagina);
+  listar(pagina = 0, tamanho = 10): Observable<Page<DadosListagemPaciente>> {
+    const params = new HttpParams().set('page', pagina).set('size', tamanho);
     return this.http.get<Page<DadosListagemPaciente>>(this.url, { params });
   }
 

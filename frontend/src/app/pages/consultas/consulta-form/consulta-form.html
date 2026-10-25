@@ -1,0 +1,83 @@
+<section class="cabecalho-pagina">
+  <h1>Agendar consulta</h1>
+</section>
+
+@if (mensagemErro(); as mensagem) {
+  <p class="alerta alerta-erro">{{ mensagem }}</p>
+}
+
+@if (carregando()) {
+  <p>Carregando...</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="formulario" novalidate>
+    <fieldset>
+      <legend>Dados da consulta</legend>
+      <div class="grade">
+        <div class="campo">
+          <label for="paciente">Paciente</label>
+          <select id="paciente" formControlName="idPaciente">
+            <option [ngValue]="null" disabled>Selecione...</option>
+            @for (paciente of pacientes(); track paciente.id) {
+              <option [ngValue]="paciente.id">{{ paciente.nome }} ({{ paciente.cpf }})</option>
+            }
+          </select>
+          @if (pacientes().length === 0) {
+            <small class="dica">
+              Nenhum paciente ativo. <a routerLink="/pacientes/novo">Cadastre um paciente</a>.
+            </small>
+          }
+          @if (erroDoCampo('idPaciente'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="data">Data e hora</label>
+          <input id="data" type="datetime-local" formControlName="data" [min]="dataMinima" />
+          <small class="dica">
+            Segunda a sábado, das 07:00 às 18:00, com pelo menos 30 minutos de antecedência.
+          </small>
+          @if (erroDoCampo('data'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="especialidade">Especialidade</label>
+          <select id="especialidade" formControlName="especialidade">
+            <option value="">Todas</option>
+            @for (especialidade of especialidades; track especialidade) {
+              <option [value]="especialidade">{{ nomesEspecialidades[especialidade] }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="medico">Médico</label>
+          <select id="medico" formControlName="idMedico">
+            <option [ngValue]="null">Qualquer médico disponível</option>
+            @for (medico of medicosDaEspecialidade(); track medico.id) {
+              <option [ngValue]="medico.id">
+                {{ medico.nome }} ({{ nomesEspecialidades[medico.especialidade] }})
+              </option>
+            }
+          </select>
+          <small class="dica">
+            Sem médico escolhido, a clínica indica um médico livre da especialidade.
+          </small>
+        </div>
+      </div>
+
+      @if (faltaMedicoOuEspecialidade()) {
+        <p class="erro-campo">Escolha um médico ou uma especialidade.</p>
+      }
+    </fieldset>
+
+    <div class="acoes-formulario">
+      <a routerLink="/consultas" class="botao">Cancelar</a>
+      <button type="submit" class="botao botao-primario" [disabled]="salvando()">
+        {{ salvando() ? 'Agendando...' : 'Agendar' }}
+      </button>
+    </div>
+  </form>
+}

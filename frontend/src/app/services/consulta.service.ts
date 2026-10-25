@@ -5,6 +5,7 @@ import {
   DadosAgendamentoConsulta,
   DadosCancelamentoConsulta,
   DadosDetalhamentoConsulta,
+  DadosListagemConsulta,
 } from '../models/consulta';
 import { Page } from '../models/page';
 
@@ -13,9 +14,9 @@ export class ConsultaService {
   private readonly http = inject(HttpClient);
   private readonly url = '/api/consultas';
 
-  listar(pagina = 0): Observable<Page<DadosDetalhamentoConsulta>> {
+  listar(pagina = 0): Observable<Page<DadosListagemConsulta>> {
     const params = new HttpParams().set('page', pagina);
-    return this.http.get<Page<DadosDetalhamentoConsulta>>(this.url, { params });
+    return this.http.get<Page<DadosListagemConsulta>>(this.url, { params });
   }
 
   agendar(dados: DadosAgendamentoConsulta): Observable<DadosDetalhamentoConsulta> {

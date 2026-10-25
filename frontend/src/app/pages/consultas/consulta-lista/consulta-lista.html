@@ -1,0 +1,103 @@
+<section class="cabecalho-pagina">
+  <h1>Consultas</h1>
+  <a routerLink="/consultas/nova" class="botao botao-primario">Agendar consulta</a>
+</section>
+
+@if (mensagemErro(); as mensagem) {
+  <p class="alerta alerta-erro">{{ mensagem }}</p>
+}
+
+@if (consultaEmCancelamento(); as consulta) {
+  <section class="painel" aria-labelledby="titulo-cancelamento">
+    <h2 id="titulo-cancelamento">Cancelar consulta</h2>
+    <p>
+      {{ consulta.nomePaciente }} com {{ consulta.nomeMedico }} em
+      {{ consulta.data | date: 'dd/MM/yyyy HH:mm' }}
+    </p>
+    <div class="campo">
+      <label for="motivo">Motivo</label>
+      <select id="motivo" [formControl]="motivo">
+        <option value="" disabled>Selecione...</option>
+        @for (opcao of motivos; track opcao) {
+          <option [value]="opcao">{{ nomesMotivos[opcao] }}</option>
+        }
+      </select>
+      @if (motivo.invalid && motivo.touched) {
+        <small class="erro-campo">Selecione o motivo do cancelamento.</small>
+      }
+    </div>
+    <p class="dica">A consulta só pode ser cancelada com pelo menos 24 horas de antecedência.</p>
+    <div class="acoes-formulario">
+      <button type="button" class="botao" (click)="fecharCancelamento()">Voltar</button>
+      <button
+        type="button"
+        class="botao botao-perigo"
+        [disabled]="cancelando()"
+        (click)="confirmarCancelamento()"
+      >
+        {{ cancelando() ? 'Cancelando...' : 'Confirmar cancelamento' }}
+      </button>
+    </div>
+  </section>
+}
+
+@if (pagina(); as resultado) {
+  @if (resultado.empty) {
+    <p class="vazio">Nenhuma consulta agendada.</p>
+  } @else {
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Data e hora</th>
+            <th>Paciente</th>
+            <th>Médico</th>
+            <th>Especialidade</th>
+            <th class="acoes">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (consulta of resultado.content; track consulta.id) {
+            <tr>
+              <td>{{ consulta.data | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ consulta.nomePaciente }}</td>
+              <td>{{ consulta.nomeMedico }}</td>
+              <td>{{ nomesEspecialidades[consulta.especialidade] }}</td>
+              <td class="acoes">
+                <button
+                  type="button"
+                  class="botao botao-perigo"
+                  (click)="abrirCancelamento(consulta)"
+                >
+                  Cancelar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="paginacao" aria-label="Paginação">
+      <button
+        type="button"
+        class="botao"
+        [disabled]="resultado.first || carregando()"
+        (click)="carregar(resultado.number - 1)"
+      >
+        Anterior
+      </button>
+      <span>Página {{ resultado.number + 1 }} de {{ resultado.totalPages }}</span>
+      <button
+        type="button"
+        class="botao"
+        [disabled]="resultado.last || carregando()"
+        (click)="carregar(resultado.number + 1)"
+      >
+        Próxima
+      </button>
+    </nav>
+  }
+} @else if (carregando()) {
+  <p>Carregando...</p>
+}
