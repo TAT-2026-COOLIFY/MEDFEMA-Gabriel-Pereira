@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -92,5 +93,15 @@ class AgendaDeConsultasTest {
 
         assertNotNull(detalhamento);
         verify(consultaRepository).save(any(Consulta.class));
+    }
+
+    @Test
+    @DisplayName("Deveria lancar excecao ao agendar sem medico e sem especialidade")
+    void agendar_semMedicoESemEspecialidade() {
+        var dados = new DadosAgendamentoConsulta(null, 2L, LocalDateTime.now().plusDays(2), null);
+        when(pacienteRepository.existsById(2L)).thenReturn(true);
+
+        assertThrows(ValidacaoException.class, () -> agenda.agendar(dados));
+        verify(consultaRepository, never()).save(any());
     }
 }

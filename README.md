@@ -26,7 +26,7 @@ A exclusão de médicos e pacientes é lógica: o registro não é apagado do ba
 - Não é permitido agendar consultas com médicos ou pacientes inativos;
 - O médico não pode ter outra consulta no mesmo horário;
 - O paciente não pode ter mais de uma consulta no mesmo dia;
-- O médico é opcional: se não for informado, a API escolhe aleatoriamente um médico livre da especialidade informada.
+- O médico é opcional: se não for informado, a especialidade passa a ser obrigatória e a API escolhe aleatoriamente um médico livre dessa especialidade.
 
 ### Cancelamento de consultas
 

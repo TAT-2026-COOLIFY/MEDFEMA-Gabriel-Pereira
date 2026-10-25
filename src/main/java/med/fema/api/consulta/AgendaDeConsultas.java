@@ -68,6 +68,10 @@ public class AgendaDeConsultas {
             return medicoRepository.getReferenceById(dados.idMedico());
         }
 
+        if (dados.especialidade() == null) {
+            throw new ValidacaoException("Especialidade é obrigatória quando o médico não for escolhido!");
+        }
+
         return medicoRepository.escolherMedicoAleatorioLivreNaData(dados.especialidade(), dados.data());
     }
 }
