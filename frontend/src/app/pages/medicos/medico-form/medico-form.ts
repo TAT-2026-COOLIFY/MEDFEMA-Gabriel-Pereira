@@ -3,9 +3,9 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { ErroValidacao } from '../../../models/erro-validacao';
 import { ESPECIALIDADES, Especialidade, NOMES_ESPECIALIDADES } from '../../../models/medico';
 import { MedicoService } from '../../../services/medico.service';
+import { aplicarErrosDosCampos, mensagemDoCampo } from '../../../shared/erros-formulario';
 import { mensagemDeErro } from '../../../shared/mensagem-erro';
 
 // Mensagens para os campos com Validators.pattern, iguais às regras do backend.
@@ -111,37 +111,12 @@ export class MedicoForm implements OnInit {
     });
   }
 
-  // Mensagem de erro de um campo, ou null se ele estiver válido ou ainda não foi tocado.
   protected erroDoCampo(caminho: string): string | null {
-    const controle = this.form.get(caminho);
-    if (!controle?.errors || !controle.touched) {
-      return null;
-    }
-
-    const erros = controle.errors;
-    if (erros['servidor']) {
-      return erros['servidor'];
-    }
-    if (erros['required']) {
-      return 'Campo obrigatório.';
-    }
-    if (erros['email']) {
-      return 'Informe um e-mail válido.';
-    }
-    if (erros['pattern']) {
-      return MENSAGENS_FORMATO[caminho] ?? 'Formato inválido.';
-    }
-    return 'Valor inválido.';
+    return mensagemDoCampo(this.form, caminho, MENSAGENS_FORMATO);
   }
 
-  // Erros 400 por campo voltam como lista [{ campo, mensagem }] e são exibidos no campo
-  // correspondente; o campo usa o mesmo caminho do formulário (ex.: 'endereco.cep').
   private tratarErro(erro: HttpErrorResponse): void {
-    if (erro.status === 400 && Array.isArray(erro.error)) {
-      for (const { campo, mensagem } of erro.error as ErroValidacao[]) {
-        this.form.get(campo)?.setErrors({ servidor: mensagem });
-      }
-      this.form.markAllAsTouched();
+    if (aplicarErrosDosCampos(this.form, erro)) {
       this.mensagemErro.set('Corrija os campos destacados.');
       return;
     }

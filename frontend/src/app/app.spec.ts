@@ -22,5 +22,6 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.marca')?.textContent).toContain('MedFema');
     expect(compiled.querySelector('.menu')?.textContent).toContain('Médicos');
+    expect(compiled.querySelector('.menu')?.textContent).toContain('Pacientes');
   });
 });

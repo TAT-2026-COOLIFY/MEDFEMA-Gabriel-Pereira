@@ -1,0 +1,66 @@
+<section class="cabecalho-pagina">
+  <h1>Pacientes</h1>
+  <a routerLink="/pacientes/novo" class="botao botao-primario">Novo paciente</a>
+</section>
+
+@if (mensagemErro(); as mensagem) {
+  <p class="alerta alerta-erro">{{ mensagem }}</p>
+}
+
+@if (pagina(); as resultado) {
+  @if (resultado.empty) {
+    <p class="vazio">Nenhum paciente ativo cadastrado.</p>
+  } @else {
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>CPF</th>
+            <th class="acoes">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (paciente of resultado.content; track paciente.id) {
+            <tr>
+              <td>{{ paciente.nome }}</td>
+              <td>{{ paciente.email }}</td>
+              <td>{{ paciente.cpf }}</td>
+              <td class="acoes">
+                <div class="botoes-linha">
+                  <a [routerLink]="['/pacientes', paciente.id, 'editar']" class="botao">Editar</a>
+                  <button type="button" class="botao botao-perigo" (click)="excluir(paciente)">
+                    Inativar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="paginacao" aria-label="Paginação">
+      <button
+        type="button"
+        class="botao"
+        [disabled]="resultado.first || carregando()"
+        (click)="carregar(resultado.number - 1)"
+      >
+        Anterior
+      </button>
+      <span>Página {{ resultado.number + 1 }} de {{ resultado.totalPages }}</span>
+      <button
+        type="button"
+        class="botao"
+        [disabled]="resultado.last || carregando()"
+        (click)="carregar(resultado.number + 1)"
+      >
+        Próxima
+      </button>
+    </nav>
+  }
+} @else if (carregando()) {
+  <p>Carregando...</p>
+}

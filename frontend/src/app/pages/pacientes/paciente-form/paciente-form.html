@@ -1,0 +1,120 @@
+<section class="cabecalho-pagina">
+  <h1>{{ id ? 'Editar paciente' : 'Novo paciente' }}</h1>
+</section>
+
+@if (mensagemErro(); as mensagem) {
+  <p class="alerta alerta-erro">{{ mensagem }}</p>
+}
+
+@if (carregando()) {
+  <p>Carregando...</p>
+} @else if (falhaAoCarregar()) {
+  <a routerLink="/pacientes" class="botao">Voltar para a lista</a>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="formulario" novalidate>
+    <fieldset>
+      <legend>Dados do paciente</legend>
+      <div class="grade">
+        <div class="campo">
+          <label for="nome">Nome</label>
+          <input id="nome" formControlName="nome" maxlength="100" />
+          @if (erroDoCampo('nome'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input id="email" type="email" formControlName="email" maxlength="100" />
+          @if (id) {
+            <small class="dica">O e-mail não pode ser alterado.</small>
+          }
+          @if (erroDoCampo('email'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="telefone">Telefone</label>
+          <input id="telefone" type="tel" formControlName="telefone" />
+          @if (erroDoCampo('telefone'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="cpf">CPF</label>
+          <input id="cpf" formControlName="cpf" inputmode="numeric" maxlength="14" />
+          @if (id) {
+            <small class="dica">O CPF não pode ser alterado.</small>
+          }
+          @if (erroDoCampo('cpf'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset formGroupName="endereco">
+      <legend>Endereço</legend>
+      <div class="grade">
+        <div class="campo">
+          <label for="logradouro">Logradouro</label>
+          <input id="logradouro" formControlName="logradouro" maxlength="100" />
+          @if (erroDoCampo('endereco.logradouro'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="numero">Número</label>
+          <input id="numero" formControlName="numero" maxlength="20" />
+        </div>
+
+        <div class="campo">
+          <label for="complemento">Complemento</label>
+          <input id="complemento" formControlName="complemento" maxlength="100" />
+        </div>
+
+        <div class="campo">
+          <label for="bairro">Bairro</label>
+          <input id="bairro" formControlName="bairro" maxlength="100" />
+          @if (erroDoCampo('endereco.bairro'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="cidade">Cidade</label>
+          <input id="cidade" formControlName="cidade" maxlength="100" />
+          @if (erroDoCampo('endereco.cidade'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="uf">UF</label>
+          <input id="uf" formControlName="uf" maxlength="2" />
+          @if (erroDoCampo('endereco.uf'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label for="cep">CEP</label>
+          <input id="cep" formControlName="cep" inputmode="numeric" maxlength="8" />
+          @if (erroDoCampo('endereco.cep'); as erro) {
+            <small class="erro-campo">{{ erro }}</small>
+          }
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="acoes-formulario">
+      <a routerLink="/pacientes" class="botao">Cancelar</a>
+      <button type="submit" class="botao botao-primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+}
