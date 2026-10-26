@@ -13,29 +13,38 @@ Enquanto um time de desenvolvimento será responsável pelo aplicativo mobile, o
 - [x] Agendamento de consultas;
 - [x] Cancelamento de consultas;
 
-A exclusão de médicos e pacientes é lógica: o registro não é apagado do banco, apenas marcado como inativo, e as listagens retornam somente os ativos.
+A exclusão de médicos e pacientes é lógica: o registro não é apagado do banco, apenas marcado como inativo, e as listagens retornam somente os ativos. Ao inativar um médico ou paciente, as consultas futuras dele são canceladas automaticamente (motivo `MEDICO_CANCELOU` ou `PACIENTE_DESISTIU`).
 
 ---
 
 ## 📋 Regras de negócio
 
+### Cadastro e atualização de médicos e pacientes
+
+- O CPF pode ser informado com ou sem pontuação e é gravado sempre no formato `000.000.000-00`;
+- A UF deve ter 2 letras e o CEP, 8 dígitos sem traço;
+- Na atualização, nome, telefone e endereço são opcionais, mas, se informados, não podem estar em branco. O endereço, quando enviado, deve vir completo.
+
 ### Agendamento de consultas
 
 - O horário de funcionamento da clínica é de segunda a sábado, das 07:00 às 19:00 (o último horário de início é às 18:00);
+- Cada consulta dura 1 hora;
 - A consulta deve ser agendada com antecedência mínima de 30 minutos;
 - Não é permitido agendar consultas com médicos ou pacientes inativos;
-- O médico não pode ter outra consulta no mesmo horário;
+- O médico não pode ter outra consulta que se sobreponha ao horário, ou seja, que comece menos de 1 hora antes ou depois;
 - O paciente não pode ter mais de uma consulta no mesmo dia;
 - O médico é opcional: se não for informado, a especialidade passa a ser obrigatória e a API escolhe aleatoriamente um médico livre dessa especialidade.
 
 ### Cancelamento de consultas
 
 - É obrigatório informar o motivo do cancelamento: `PACIENTE_DESISTIU`, `MEDICO_CANCELOU` ou `OUTROS`;
-- A consulta só pode ser cancelada com antecedência mínima de 24 horas.
+- A consulta só pode ser cancelada com antecedência mínima de 24 horas;
+- Uma consulta já cancelada não pode ser cancelada novamente.
 
 ### Respostas de erro
 
 - Regra de negócio violada: `400 Bad Request` com a mensagem do erro;
+- Ordenação por um campo que não existe (ex.: `?sort=xyz`): `400 Bad Request` com a mensagem do erro;
 - Campos inválidos no corpo da requisição: `400 Bad Request` com a lista de erros por campo, no formato `[{ "campo": "crm", "mensagem": "..." }]`;
 - E-mail, CRM ou CPF já cadastrado: `400 Bad Request` no mesmo formato, indicando o campo repetido (ex.: `[{ "campo": "crm", "mensagem": "já está cadastrado" }]`);
 - Registro não encontrado (id inexistente): `404 Not Found`.

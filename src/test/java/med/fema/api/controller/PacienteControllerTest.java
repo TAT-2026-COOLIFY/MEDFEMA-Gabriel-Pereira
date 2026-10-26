@@ -1,6 +1,9 @@
 package med.fema.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import med.fema.api.consulta.Consulta;
+import med.fema.api.consulta.ConsultaRepository;
+import med.fema.api.consulta.MotivoCancelamento;
 import med.fema.api.endereco.DadosEndereco;
 import med.fema.api.paciente.DadosAtualizacaoPaciente;
 import med.fema.api.paciente.DadosCadastroPaciente;
@@ -21,7 +24,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,6 +49,9 @@ class PacienteControllerTest {
 
     @MockBean
     private PacienteRepository repository;
+
+    @MockBean
+    private ConsultaRepository consultaRepository;
 
     private DadosEndereco dadosEndereco() {
         return new DadosEndereco(
@@ -129,12 +139,29 @@ class PacienteControllerTest {
     }
 
     @Test
-    @DisplayName("Deveria devolver codigo HTTP 200 ao excluir (inativar) paciente")
+    @DisplayName("Deveria devolver codigo HTTP 400 quando o telefone vier em branco ou o CEP for invalido na atualizacao do paciente")
+    void atualizar_cenarioInvalido() throws Exception {
+        var endereco = new DadosEndereco("Rua Nove de Julho", "Vila Operária", "abc", "Assis", "SP", null, "50");
+        var dadosAtualizacao = new DadosAtualizacaoPaciente(1L, null, "", endereco);
+
+        mvc.perform(put("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosAtualizacao)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].campo", containsInAnyOrder("telefone", "endereco.cep")));
+    }
+
+    @Test
+    @DisplayName("Deveria devolver codigo HTTP 200 ao excluir (inativar) paciente e cancelar as consultas futuras dele")
     void excluir_cenarioValido() throws Exception {
         var paciente = new Paciente(new DadosCadastroPaciente("Mariana", "mariana@email.com", "18988887777", "123.456.789-00", dadosEndereco()));
+        var consulta = mock(Consulta.class);
         when(repository.getReferenceById(1L)).thenReturn(paciente);
+        when(consultaRepository.findAllByPacienteIdAndDataAfterAndMotivoCancelamentoIsNull(eq(1L), any())).thenReturn(List.of(consulta));
 
         mvc.perform(delete("/pacientes/1"))
                 .andExpect(status().isOk());
+
+        verify(consulta).cancelar(MotivoCancelamento.PACIENTE_DESISTIU);
     }
 }

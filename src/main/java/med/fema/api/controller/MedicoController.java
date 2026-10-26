@@ -1,6 +1,8 @@
 package med.fema.api.controller;
 
 import jakarta.validation.Valid;
+import med.fema.api.consulta.ConsultaRepository;
+import med.fema.api.consulta.MotivoCancelamento;
 import med.fema.api.medico.DadosAtualizacaoMedico;
 import med.fema.api.medico.DadosCadastroMedico;
 import med.fema.api.medico.DadosDetalhamentoMedico;
@@ -21,12 +23,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("medicos")
 public class MedicoController {
 
     @Autowired
     private MedicoRepository repository;
+
+    @Autowired
+    private ConsultaRepository consultaRepository;
 
     @PostMapping
     @Transactional
@@ -57,5 +64,9 @@ public class MedicoController {
     public void excluir(@PathVariable Long id) {
         var medico = repository.getReferenceById(id);
         medico.excluir();
+
+        // As consultas futuras do médico inativado não vão acontecer, então são canceladas.
+        consultaRepository.findAllByMedicoIdAndDataAfterAndMotivoCancelamentoIsNull(id, LocalDateTime.now())
+                .forEach(consulta -> consulta.cancelar(MotivoCancelamento.MEDICO_CANCELOU));
     }
 }

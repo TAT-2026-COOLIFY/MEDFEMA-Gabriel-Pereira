@@ -2,6 +2,7 @@ package med.fema.api.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,6 +41,12 @@ public class TratadorDeErros {
     @ExceptionHandler(ValidacaoException.class)
     public ResponseEntity tratarErroRegraDeNegocio(ValidacaoException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    // Ordenação por um campo que não existe, ex.: GET /medicos?sort=xyz.
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity tratarErroOrdenacao(PropertyReferenceException ex) {
+        return ResponseEntity.badRequest().body("Não é possível ordenar pelo campo '" + ex.getPropertyName() + "'.");
     }
 
     private record DadosErroValidacao(String campo, String mensagem) {

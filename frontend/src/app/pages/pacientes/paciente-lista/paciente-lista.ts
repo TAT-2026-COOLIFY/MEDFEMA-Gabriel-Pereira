@@ -36,7 +36,11 @@ export class PacienteLista implements OnInit {
   }
 
   protected excluir(paciente: DadosListagemPaciente): void {
-    if (!confirm(`Deseja inativar o paciente ${paciente.nome}?`)) {
+    if (
+      !confirm(
+        `Deseja inativar o paciente ${paciente.nome}? As consultas futuras serão canceladas.`,
+      )
+    ) {
       return;
     }
     this.service.excluir(paciente.id).subscribe({

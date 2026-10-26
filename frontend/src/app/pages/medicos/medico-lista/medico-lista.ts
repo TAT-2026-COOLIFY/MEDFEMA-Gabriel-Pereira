@@ -37,7 +37,9 @@ export class MedicoLista implements OnInit {
   }
 
   protected excluir(medico: DadosListagemMedico): void {
-    if (!confirm(`Deseja inativar o médico ${medico.nome}?`)) {
+    if (
+      !confirm(`Deseja inativar o médico ${medico.nome}? As consultas futuras serão canceladas.`)
+    ) {
       return;
     }
     this.service.excluir(medico.id).subscribe({

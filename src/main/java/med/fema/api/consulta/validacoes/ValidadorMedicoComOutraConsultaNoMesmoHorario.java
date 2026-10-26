@@ -18,7 +18,11 @@ public class ValidadorMedicoComOutraConsultaNoMesmoHorario implements ValidadorA
             return;
         }
 
-        var medicoPossuiOutraConsultaNoMesmoHorario = repository.existsByMedicoIdAndDataAndMotivoCancelamentoIsNull(dados.idMedico(), dados.data());
+        // A consulta dura 1 hora, então outra consulta do médico que comece
+        // até 59 minutos antes ou depois ocupa o mesmo horário.
+        var inicio = dados.data().minusMinutes(59);
+        var fim = dados.data().plusMinutes(59);
+        var medicoPossuiOutraConsultaNoMesmoHorario = repository.existsByMedicoIdAndDataBetweenAndMotivoCancelamentoIsNull(dados.idMedico(), inicio, fim);
         if (medicoPossuiOutraConsultaNoMesmoHorario) {
             throw new ValidacaoException("Médico já possui outra consulta agendada nesse mesmo horário");
         }

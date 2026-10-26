@@ -72,6 +72,9 @@ public class AgendaDeConsultas {
             throw new ValidacaoException("Especialidade é obrigatória quando o médico não for escolhido!");
         }
 
-        return medicoRepository.escolherMedicoAleatorioLivreNaData(dados.especialidade(), dados.data());
+        // Mesmo intervalo do ValidadorMedicoComOutraConsultaNoMesmoHorario: a consulta dura 1 hora.
+        var inicio = dados.data().minusMinutes(59);
+        var fim = dados.data().plusMinutes(59);
+        return medicoRepository.escolherMedicoAleatorioLivreNaData(dados.especialidade(), inicio, fim);
     }
 }
