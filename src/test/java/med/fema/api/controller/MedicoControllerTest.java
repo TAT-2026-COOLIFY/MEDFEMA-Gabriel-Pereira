@@ -26,11 +26,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -117,6 +120,30 @@ class MedicoControllerTest {
                         .content(objectMapper.writeValueAsString(dadosCadastro)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].campo").value("crm"));
+    }
+
+    @Test
+    @DisplayName("Deveria reativar o medico inativo quando o CRM dele for cadastrado de novo")
+    void cadastrar_cenarioMedicoInativo() throws Exception {
+        var dadosCadastro = new DadosCadastroMedico(
+                "Dr. Rodrigo Ferreira",
+                "rodrigo@medfema.com",
+                "18999998888",
+                "123456",
+                Especialidade.CARDIOLOGIA,
+                dadosEndereco()
+        );
+        var medicoInativo = new Medico(dadosCadastro);
+        medicoInativo.excluir();
+        when(repository.findByCrmAndAtivoFalse("123456")).thenReturn(Optional.of(medicoInativo));
+
+        mvc.perform(post("/medicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCadastro)))
+                .andExpect(status().isOk());
+
+        assertTrue(medicoInativo.getAtivo());
+        verify(repository, never()).save(any());
     }
 
     @Test

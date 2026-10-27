@@ -38,6 +38,13 @@ public class MedicoController {
     @PostMapping
     @Transactional
     public void cadastrar(@RequestBody @Valid DadosCadastroMedico dados) {
+        // O CRM é único no banco, então o recadastro de um médico inativado reativa o cadastro antigo.
+        var inativo = repository.findByCrmAndAtivoFalse(dados.crm());
+        if (inativo.isPresent()) {
+            inativo.get().reativar(dados);
+            return;
+        }
+
         repository.save(new Medico(dados));
     }
 

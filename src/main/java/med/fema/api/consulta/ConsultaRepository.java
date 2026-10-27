@@ -12,7 +12,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     boolean existsByMedicoIdAndDataBetweenAndMotivoCancelamentoIsNull(Long idMedico, LocalDateTime inicio, LocalDateTime fim);
 
-    Page<Consulta> findAllByMotivoCancelamentoIsNull(Pageable paginacao);
+    Page<Consulta> findAllByDataAfterAndMotivoCancelamentoIsNull(LocalDateTime data, Pageable paginacao);
 
     List<Consulta> findAllByMedicoIdAndDataAfterAndMotivoCancelamentoIsNull(Long idMedico, LocalDateTime data);
 

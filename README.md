@@ -13,7 +13,7 @@ Enquanto um time de desenvolvimento será responsável pelo aplicativo mobile, o
 - [x] Agendamento de consultas;
 - [x] Cancelamento de consultas;
 
-A exclusão de médicos e pacientes é lógica: o registro não é apagado do banco, apenas marcado como inativo, e as listagens retornam somente os ativos. Ao inativar um médico ou paciente, as consultas futuras dele são canceladas automaticamente (motivo `MEDICO_CANCELOU` ou `PACIENTE_DESISTIU`).
+A exclusão de médicos e pacientes é lógica: o registro não é apagado do banco, apenas marcado como inativo, e as listagens retornam somente os ativos. Ao inativar um médico ou paciente, as consultas futuras dele são canceladas automaticamente (motivo `MEDICO_CANCELOU` ou `PACIENTE_DESISTIU`). Se um médico ou paciente inativado for cadastrado de novo (mesmo CRM ou CPF), o cadastro antigo é reativado com os dados novos.
 
 ---
 
@@ -65,7 +65,7 @@ A exclusão de médicos e pacientes é lógica: o registro não é apagado do ba
 | GET    | `/pacientes/{id}` | Detalha um paciente, incluindo telefone e endereço |
 | PUT    | `/pacientes`      | Atualiza os dados de um paciente            |
 | DELETE | `/pacientes/{id}` | Inativa um paciente                         |
-| GET    | `/consultas`      | Lista as consultas não canceladas (paginado, 10 por página, ordenado por data) |
+| GET    | `/consultas`      | Lista as próximas consultas não canceladas (paginado, 10 por página, ordenado por data) |
 | POST   | `/consultas`      | Agenda uma consulta                         |
 | DELETE | `/consultas`      | Cancela uma consulta (id e motivo no corpo da requisição) |
 

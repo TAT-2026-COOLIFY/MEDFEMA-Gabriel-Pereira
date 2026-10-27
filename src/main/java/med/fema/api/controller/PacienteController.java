@@ -38,6 +38,13 @@ public class PacienteController {
     @PostMapping
     @Transactional
     public void cadastrar(@RequestBody @Valid DadosCadastroPaciente dados) {
+        // O CPF é único no banco, então o recadastro de um paciente inativado reativa o cadastro antigo.
+        var inativo = repository.findByCpfAndAtivoFalse(Paciente.formatarCpf(dados.cpf()));
+        if (inativo.isPresent()) {
+            inativo.get().reativar(dados);
+            return;
+        }
+
         repository.save(new Paciente(dados));
     }
 

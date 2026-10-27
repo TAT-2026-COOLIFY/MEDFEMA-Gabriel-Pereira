@@ -57,4 +57,14 @@ public class Medico {
     public void excluir() {
         this.ativo = false;
     }
+
+    // Recadastro de um médico inativado: o cadastro antigo volta a valer, com os dados novos.
+    public void reativar(DadosCadastroMedico dados) {
+        this.ativo = true;
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.telefone = dados.telefone();
+        this.especialidade = dados.especialidade();
+        this.endereco = new Endereco(dados.endereco());
+    }
 }

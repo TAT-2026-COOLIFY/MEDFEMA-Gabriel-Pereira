@@ -41,6 +41,8 @@ public class AgendaDeConsultas {
     }
 
     public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados) {
+        travarParaAgendamento(dados);
+
         if (!pacienteRepository.existsById(dados.idPaciente())) {
             throw new ValidacaoException("Id do paciente informado não existe!");
         }
@@ -61,6 +63,19 @@ public class AgendaDeConsultas {
         consultaRepository.save(consulta);
 
         return new DadosDetalhamentoConsulta(consulta);
+    }
+
+    // Trava o paciente e o(s) médico(s) até o fim da transação, para que duas requisições
+    // simultâneas não passem juntas pelos validadores e marquem o mesmo horário.
+    // Precisa vir antes de qualquer outra consulta: no MySQL, as leituras seguintes só
+    // enxergam o que a outra requisição gravou se começarem depois da trava.
+    private void travarParaAgendamento(DadosAgendamentoConsulta dados) {
+        pacienteRepository.travarParaAgendamento(dados.idPaciente());
+        if (dados.idMedico() != null) {
+            medicoRepository.travarParaAgendamento(dados.idMedico());
+        } else if (dados.especialidade() != null) {
+            medicoRepository.travarMedicosDaEspecialidade(dados.especialidade());
+        }
     }
 
     private Medico escolherMedico(DadosAgendamentoConsulta dados) {

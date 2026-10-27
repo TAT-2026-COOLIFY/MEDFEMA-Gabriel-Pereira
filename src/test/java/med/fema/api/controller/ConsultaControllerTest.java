@@ -60,7 +60,7 @@ class ConsultaControllerTest {
         var medico = new Medico(new DadosCadastroMedico("Dr. Rodrigo", "rodrigo@email.com", "18999998888", "123456", Especialidade.CARDIOLOGIA, endereco));
         var paciente = new Paciente(new DadosCadastroPaciente("Mariana Souza", "mariana@email.com", "18988887777", "123.456.789-00", endereco));
         var consulta = new Consulta(1L, medico, paciente, LocalDateTime.now().plusDays(3));
-        when(consultaRepository.findAllByMotivoCancelamentoIsNull(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(consulta)));
+        when(consultaRepository.findAllByDataAfterAndMotivoCancelamentoIsNull(any(LocalDateTime.class), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(consulta)));
 
         mvc.perform(get("/consultas"))
                 .andExpect(status().isOk())

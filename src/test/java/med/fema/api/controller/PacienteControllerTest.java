@@ -23,11 +23,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -112,6 +115,29 @@ class PacienteControllerTest {
                         .content(objectMapper.writeValueAsString(dadosCadastro)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[0].campo").value("cpf"));
+    }
+
+    @Test
+    @DisplayName("Deveria reativar o paciente inativo quando o CPF dele for cadastrado de novo, mesmo sem pontuacao")
+    void cadastrar_cenarioPacienteInativo() throws Exception {
+        var dadosCadastro = new DadosCadastroPaciente(
+                "Mariana Souza",
+                "mariana@email.com",
+                "18988887777",
+                "12345678900",
+                dadosEndereco()
+        );
+        var pacienteInativo = new Paciente(dadosCadastro);
+        pacienteInativo.excluir();
+        when(repository.findByCpfAndAtivoFalse("123.456.789-00")).thenReturn(Optional.of(pacienteInativo));
+
+        mvc.perform(post("/pacientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dadosCadastro)))
+                .andExpect(status().isOk());
+
+        assertTrue(pacienteInativo.getAtivo());
+        verify(repository, never()).save(any());
     }
 
     @Test

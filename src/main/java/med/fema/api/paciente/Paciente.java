@@ -40,7 +40,7 @@ public class Paciente {
 
     // Grava sempre no formato 000.000.000-00, para o unique do banco barrar
     // o mesmo CPF mesmo quando ele for digitado com ou sem pontuação.
-    private static String formatarCpf(String cpf) {
+    public static String formatarCpf(String cpf) {
         var digitos = cpf.replaceAll("\\D", "");
         return digitos.replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
     }
@@ -59,5 +59,14 @@ public class Paciente {
 
     public void excluir() {
         this.ativo = false;
+    }
+
+    // Recadastro de um paciente inativado: o cadastro antigo volta a valer, com os dados novos.
+    public void reativar(DadosCadastroPaciente dados) {
+        this.ativo = true;
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.telefone = dados.telefone();
+        this.endereco = new Endereco(dados.endereco());
     }
 }

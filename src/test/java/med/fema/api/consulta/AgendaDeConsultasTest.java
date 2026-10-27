@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -93,6 +94,23 @@ class AgendaDeConsultasTest {
 
         assertNotNull(detalhamento);
         verify(consultaRepository).save(any(Consulta.class));
+    }
+
+    @Test
+    @DisplayName("Deveria travar o paciente e os medicos da especialidade antes de validar o agendamento sem medico")
+    void agendar_travaAntesDeValidar() {
+        var dados = new DadosAgendamentoConsulta(null, 2L, LocalDateTime.now().plusDays(2), Especialidade.CARDIOLOGIA);
+
+        when(pacienteRepository.existsById(2L)).thenReturn(true);
+        when(pacienteRepository.getReferenceById(2L)).thenReturn(paciente);
+        when(medicoRepository.escolherMedicoAleatorioLivreNaData(any(), any(), any())).thenReturn(medico);
+
+        agenda.agendar(dados);
+
+        var ordem = inOrder(pacienteRepository, medicoRepository);
+        ordem.verify(pacienteRepository).travarParaAgendamento(2L);
+        ordem.verify(medicoRepository).travarMedicosDaEspecialidade(Especialidade.CARDIOLOGIA);
+        ordem.verify(pacienteRepository).existsById(2L);
     }
 
     @Test

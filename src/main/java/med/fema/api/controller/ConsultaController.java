@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("consultas")
 public class ConsultaController {
@@ -29,9 +31,10 @@ public class ConsultaController {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    // Só as próximas consultas: as que já passaram não estão mais agendadas.
     @GetMapping
     public Page<DadosListagemConsulta> listar(@PageableDefault(size = 10, sort = {"data"}) Pageable paginacao) {
-        return consultaRepository.findAllByMotivoCancelamentoIsNull(paginacao).map(DadosListagemConsulta::new);
+        return consultaRepository.findAllByDataAfterAndMotivoCancelamentoIsNull(LocalDateTime.now(), paginacao).map(DadosListagemConsulta::new);
     }
 
     @PostMapping
