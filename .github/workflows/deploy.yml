@@ -47,12 +47,14 @@ jobs:
     name: Deploy no Coolify
     needs: build
     runs-on: ubuntu-latest
+    # Se o Coolify estiver fora do ar, o job falha em poucos minutos em vez de ficar preso por horas
+    timeout-minutes: 5
     steps:
       - name: Disparar deploy pela API do Coolify
         env:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
           COOLIFY_APP_UUIDS: ${{ vars.COOLIFY_APP_UUIDS }}
         run: |
-          curl --fail-with-body -sS \
+          curl --fail-with-body -sS --max-time 60 \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             "$COOLIFY_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUIDS&force=false"
