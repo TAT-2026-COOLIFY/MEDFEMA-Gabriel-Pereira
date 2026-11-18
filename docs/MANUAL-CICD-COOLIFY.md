@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Aluno** | Gabriel Pereira |
+| **Aluno** | Gabriel Henrique Pereira (RA 2411550620) |
 | **Aplicação** | MEDFEMA (agendamento de consultas médicas) |
 | **Repositório** | https://github.com/TAT-2026-COOLIFY/MEDFEMA-Gabriel-Pereira |
 | **Coolify** | https://computacao.fema.edu.br (projeto **ADS**, ambiente **turma 2**) |
