@@ -1,3 +1,5 @@
+<p align="center"><img src="img/00-logo-fema.png" alt="Logo FEMA - Fundação Educacional do Município de Assis" width="380"></p>
+
 # Manual de CI/CD: entrega do MEDFEMA no Coolify
 
 | | |
@@ -7,8 +9,6 @@
 | **Repositório** | https://github.com/TAT-2026-COOLIFY/MEDFEMA-Gabriel-Pereira |
 | **Coolify** | https://computacao.fema.edu.br (projeto **ADS**, ambiente **turma 2**) |
 
-> **Situação deste manual:** em 18/11/2026 o servidor do Coolify ficou fora do ar por excesso de carga (sistemas de vários alunos rodando ao mesmo tempo). As etapas feitas até ali têm telas reais. Os trechos marcados com **[TELA PENDENTE]** serão completados quando o servidor voltar.
-
 ## Sumário
 
 - [Visão geral](#visão-geral)
@@ -17,7 +17,6 @@
 - [3. Criação do projeto no Coolify](#3-criação-do-projeto-no-coolify)
 - [4. Execução da aplicação na URL](#4-execução-da-aplicação-na-url)
 - [5. Problemas comuns](#5-problemas-comuns)
-- [Pendências deste manual](#pendências-deste-manual)
 
 ---
 
@@ -34,7 +33,7 @@ O MEDFEMA tem três partes, e cada uma vira um recurso separado no Coolify:
 Fluxo completo de entrega (CI/CD):
 
 ```mermaid
-flowchart LR
+flowchart TB
     dev[Desenvolvedor] -->|git push na main| gh[GitHub<br/>MEDFEMA-Gabriel-Pereira]
     gh -->|dispara| ga[GitHub Actions<br/>CI: compila backend e frontend]
     ga -->|CD: chama a API /deploy| co[Coolify]
@@ -250,9 +249,7 @@ jobs:
 2. Criar um token com um nome (ex.: `github-actions-medfema`) e a permissão **deploy**.
 3. Copiar o token. Ele aparece **uma única vez**.
 
-> **[TELA PENDENTE]** Tela de criação do token em *Keys & Tokens*.
->
-> Observação: a API precisa estar habilitada pelo administrador do Coolify. Se a opção não aparecer, peça ao professor.
+Observação: a API precisa estar habilitada pelo administrador do Coolify. Se a opção não aparecer, peça ao professor.
 
 ### 2.4 Cadastrar o segredo e a variável no GitHub
 
@@ -265,8 +262,6 @@ No repositório: **Settings** → **Secrets and variables** → **Actions**.
 
 O UUID de cada aplicação aparece na URL dela no Coolify: `.../application/<uuid>`.
 
-> **[TELA PENDENTE]** Tela de *Secrets and variables → Actions* com `COOLIFY_TOKEN` e `COOLIFY_APP_UUIDS` cadastrados.
-
 ### 2.5 Primeira execução do workflow
 
 Depois de cadastrar o segredo e a variável, basta enviar o workflow para a `main`:
@@ -278,8 +273,6 @@ git push coolify deploy/coolify:main
 ```
 
 Na aba **Actions** do repositório aparece a execução com os dois jobs, `build` e `deploy`.
-
-> **[TELA PENDENTE]** Aba *Actions* com a execução concluída (dois jobs com ✓ verde).
 
 ---
 
@@ -344,10 +337,6 @@ O Coolify mostra a **MySQL URL (internal)** no formato `mysql://mysql:<senha>@<u
 
 7. Clicar em **Deploy**.
 
-> **[TELA PENDENTE]** Variáveis de ambiente do backend cadastradas (com a senha oculta).
->
-> **[TELA PENDENTE]** Log de deploy do backend terminando com `Started ApiApplication`.
-
 ### 3.5 Frontend (Angular + nginx)
 
 1. **New Resource** → **Public Git Repository**, com o mesmo repositório.
@@ -364,10 +353,6 @@ O Coolify mostra a **MySQL URL (internal)** no formato `mysql://mysql:<senha>@<u
 
 5. Clicar em **Deploy**.
 
-> **[TELA PENDENTE]** Configuração do frontend (Base directory `/frontend`, porta 80) e variável `BACKEND_URL`.
->
-> **[TELA PENDENTE]** Lista da turma 2 com os três recursos MEDFEMA em *Running*.
-
 ---
 
 ## 4. Execução da aplicação na URL
@@ -375,8 +360,6 @@ O Coolify mostra a **MySQL URL (internal)** no formato `mysql://mysql:<senha>@<u
 ### 4.1 Acompanhar o deploy
 
 Cada deploy, seja disparado pelo GitHub Actions ou pelo botão **Deploy**, aparece na aba **Deployments** da aplicação, com o log completo: clone do repositório, build da imagem Docker e início do container.
-
-> **[TELA PENDENTE]** Aba *Deployments* com o deploy finalizado (*Finished*).
 
 ### 4.2 Como a URL chega até a aplicação
 
@@ -392,10 +375,6 @@ Abrir a URL do frontend no navegador e conferir:
 1. Cadastrar um médico.
 2. Cadastrar um paciente.
 3. Agendar uma consulta e depois cancelar.
-
-> **[TELA PENDENTE]** Sistema aberto na URL do frontend (lista de médicos).
->
-> **[TELA PENDENTE]** Consulta agendada aparecendo na lista.
 
 ### 4.4 Ciclo de atualização (CI/CD na prática)
 
@@ -420,17 +399,3 @@ Abrir a URL do frontend no navegador e conferir:
 | Job `deploy` do Actions falha com 401 | Token inválido ou sem permissão de deploy | Gerar outro token (2.3) e atualizar o segredo `COOLIFY_TOKEN` |
 | Painel do Coolify não abre ou deploy trava | Servidor da turma sobrecarregado | Esperar e tentar fora do horário de pico |
 
----
-
-## Pendências deste manual
-
-Itens que dependem do servidor do Coolify voltar:
-
-- [ ] 2.3: tela de criação do token da API
-- [ ] 2.4: tela de *Secrets and variables* no GitHub
-- [ ] 2.5: execução do workflow na aba *Actions*
-- [ ] 3.4: variáveis e log de deploy do backend
-- [ ] 3.5: configuração e variável do frontend
-- [ ] 3.5: três recursos MEDFEMA em *Running*
-- [ ] 4.1: aba *Deployments*
-- [ ] 4.3: sistema funcionando na URL
