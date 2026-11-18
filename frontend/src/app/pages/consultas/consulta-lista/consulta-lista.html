@@ -59,10 +59,10 @@
         <tbody>
           @for (consulta of resultado.content; track consulta.id) {
             <tr>
-              <td>{{ consulta.data | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ consulta.nomePaciente }}</td>
-              <td>{{ consulta.nomeMedico }}</td>
-              <td>{{ nomesEspecialidades[consulta.especialidade] }}</td>
+              <td data-label="Data e hora">{{ consulta.data | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td data-label="Paciente">{{ consulta.nomePaciente }}</td>
+              <td data-label="Médico">{{ consulta.nomeMedico }}</td>
+              <td data-label="Especialidade">{{ nomesEspecialidades[consulta.especialidade] }}</td>
               <td class="acoes">
                 <button
                   type="button"

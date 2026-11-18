@@ -254,3 +254,59 @@ main.container {
   gap: 12px;
   justify-content: flex-end;
 }
+
+/* Celular e tablet: cada linha da tabela vira um cartão, com o nome da coluna (data-label) ao lado do valor.
+   860px é um pouco mais que a largura da tabela de médicos, a mais larga. */
+@media (max-width: 860px) {
+  .tabela-rolagem {
+    overflow: visible;
+    border: none;
+    background: none;
+  }
+
+  .tabela,
+  .tabela tbody {
+    display: block;
+  }
+
+  .tabela thead {
+    display: none;
+  }
+
+  .tabela tr {
+    display: block;
+    margin-bottom: 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    background: var(--cor-superficie);
+  }
+
+  .tabela td {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    border-bottom: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .tabela td + td {
+    border-top: 1px solid var(--cor-borda);
+  }
+
+  .tabela td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    text-align: left;
+  }
+
+  .tabela td.acoes {
+    justify-content: flex-end;
+  }
+
+  .tabela td.acoes::before {
+    content: none;
+  }
+}

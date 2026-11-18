@@ -25,10 +25,10 @@
         <tbody>
           @for (medico of resultado.content; track medico.id) {
             <tr>
-              <td>{{ medico.nome }}</td>
-              <td>{{ medico.email }}</td>
-              <td>{{ medico.crm }}</td>
-              <td>{{ nomesEspecialidades[medico.especialidade] }}</td>
+              <td data-label="Nome">{{ medico.nome }}</td>
+              <td data-label="E-mail">{{ medico.email }}</td>
+              <td data-label="CRM">{{ medico.crm }}</td>
+              <td data-label="Especialidade">{{ nomesEspecialidades[medico.especialidade] }}</td>
               <td class="acoes">
                 <div class="botoes-linha">
                   <a [routerLink]="['/medicos', medico.id, 'editar']" class="botao">Editar</a>

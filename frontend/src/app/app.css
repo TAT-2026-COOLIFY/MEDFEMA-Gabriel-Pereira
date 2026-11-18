@@ -35,3 +35,22 @@
   background: rgb(255 255 255 / 0.15);
   opacity: 1;
 }
+
+/* No celular, o menu desce para uma linha própria abaixo da marca. */
+@media (max-width: 600px) {
+  .topo-conteudo {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .menu {
+    width: 100%;
+  }
+
+  .menu a {
+    flex: 1;
+    text-align: center;
+  }
+}
